@@ -894,7 +894,7 @@ function App() {
                     }
                   </ColumnGroup>
                 </Table>
-                <pre>{JSON.stringify(dataTeam, null, 2)}</pre>
+                {/* <pre>{JSON.stringify(dataTeam, null, 2)}</pre> */}
               </>
             )}
           </Tabs.Tab>
