@@ -277,14 +277,94 @@ function App() {
         if(findSizeHipArr.length === 0) {sizeHip = 0} else {sizeHip = Math.min(...findSizeHipArr)}
         // _________________________________________
   
-        const sizeUpArr = [sizeChest, sizeWaist, sizeHip]
-        // console.log(sizeUpArr)
-  
-        var sizeUp
+        const sizeUpArr = [sizeChest, sizeWaist, sizeHip].filter(element => element !== 0)
+        console.log(sizeUpArr.length)
+        console.log(["Грудь "+ sizeChest + "/   Тал " + sizeWaist + "/   Бедр " + sizeHip])
+
+        const noSize = sizeUpArr.length < 3
+
+        var noSizeWhy = ''
+
+        var sizeUp = 0
+
+        if(sizeChest === 0){
+          const SizeChestArr = Object.keys(dataTableUp.find(obj => {
+            return obj.Height === Girth && obj.Letter === 'A';
+          })).slice(0, -2).map(obj =>{
+            return Number(obj)
+          })
+          const maxSizeChest = Math.max(...SizeChestArr)
+          const minSizeChest = Math.min(...SizeChestArr)
+
+          const incChestMax = parseFloat((dataTableUp.find(obj => {
+            return obj.Height === Girth && obj.Letter === 'A';
+          })[maxSizeChest] * 2 - person.Chest).toFixed(2));
+          const incChestMin = parseFloat((dataTableUp.find(obj => {
+            return obj.Height === Girth && obj.Letter === 'A';
+          })[minSizeChest] * 2 - person.Chest).toFixed(2));
+
+          if(incChestMin < ExtensibilitChest.From ) {noSizeWhy = 'Макс'; sizeUp = maxSizeChest}
+          if(incChestMax > ExtensibilitChest.To && sizeUpArr.length === 0) {noSizeWhy = 'Мин'; sizeUp = minSizeChest}
+          if(sizeUpArr.length >= 1) {console.log('dfhdrhdsrhdsrhdsrh')}
+          console.log([minSizeChest, maxSizeChest,  incChestMin  + '<'+ ExtensibilitChest.From,incChestMax   + '>'+ ExtensibilitChest.To])
+          
+        }
+        if(sizeWaist === 0){
+          const SizeWaistArr = Object.keys(dataTableUp.find(obj => {
+            return obj.Height === Girth && obj.Letter === 'B';
+          })).slice(0, -2).map(obj =>{
+            return Number(obj)
+          })
+          const maxSizeWaist = Math.max(...SizeWaistArr)
+          const minSizeWaist = Math.min(...SizeWaistArr)
+
+          const incWaistMax = parseFloat((dataTableUp.find(obj => {
+            return obj.Height === Girth && obj.Letter === 'B';
+          })[maxSizeWaist] * 2 - person.Waist).toFixed(2));
+          const incWaistMin = parseFloat((dataTableUp.find(obj => {
+            return obj.Height === Girth && obj.Letter === 'B';
+          })[minSizeWaist] * 2 - person.Waist).toFixed(2));
+
+          if(incWaistMax < ExtensibilitWaist.From) {noSizeWhy = 'Макс'; sizeUp = maxSizeWaist}
+          console.log([minSizeWaist, maxSizeWaist, incWaistMax + '<'+ ExtensibilitWaist.From])
+          
+        }
+        if(sizeHip === 0){
+          const SizeHipArr = Object.keys(dataTableUp.find(obj => {
+            return obj.Height === Girth && obj.Letter === 'C';
+          })).slice(0, -2).map(obj =>{
+            return Number(obj)
+          })
+          const maxSizeHip = Math.max(...SizeHipArr)
+          const minSizeHip = Math.min(...SizeHipArr)
+
+          const incHipMax = parseFloat((dataTableUp.find(obj => {
+            return obj.Height === Girth && obj.Letter === 'C';
+          })[maxSizeHip] * 2 - person.Hip).toFixed(2));
+          const incHipMin = parseFloat((dataTableUp.find(obj => {
+            return obj.Height === Girth && obj.Letter === 'C';
+          })[minSizeHip] * 2 - person.Hip).toFixed(2));
+
+          
+          console.log(dataTableUp.find(obj => {
+            return obj.Height === Girth && obj.Letter === 'C';
+          })[maxSizeHip])
+
+          if(incHipMin < ExtensibilitHip.From) {noSizeWhy = 'Макс'; sizeUp = maxSizeHip}
+          if(incHipMax > ExtensibilitHip.To && sizeUpArr.length === 0) {noSizeWhy = 'Мин'; sizeUp = minSizeHip}
+          console.log([minSizeHip, maxSizeHip,incHipMin  + '<'+ ExtensibilitHip.From, incHipMax + '>'+ ExtensibilitHip.To])
+          
+        }
+
+        var sizeCountUp
         
-        if (!person.MySizeUp) {sizeUp = Math.max(...sizeUpArr)} else {sizeUp = person.MySizeUp}
-        const sizeCountUp = Math.max(...sizeUpArr)
-  
+        console.log(sizeUp)
+        if (sizeUpArr.length === 3 || sizeUp === 0)  {sizeCountUp = Math.max(...sizeUpArr); console.log(sizeCountUp)} 
+        else {sizeCountUp=sizeUp; console.log(sizeCountUp)}
+        
+        if (!person.MySizeUp) {sizeUp = sizeCountUp} 
+        else {sizeUp = person.MySizeUp}
+        
         const incChest = parseFloat((dataTableUp.find(obj => {
           return obj.Height === Girth && obj.Letter === 'A';
         })[sizeUp] * 2 - person.Chest).toFixed(2));
@@ -296,17 +376,17 @@ function App() {
         const incHip = parseFloat((dataTableUp.find(obj => {
           return obj.Height === Girth && obj.Letter === 'C';
         })[sizeUp] * 2 - person.Hip).toFixed(2));
-  
         const nextSizes = dataTeam.map((c, i) => {
           if (i === index) {
             const newItem = c
-            if (!person.MyGirthUp) {c.countSizeUp = sizeCountUp} 
-            c.WorkSizeUp = sizeUp
+            if (!person.MyGirthUp) {c.countSizeUp = sizeCountUp}
+            if (person.MySizehUp) {c.WorkSizeUp = sizeUp} else {c.WorkSizeUp = sizeCountUp}
+            
             c.WorGirthUp = Girth
-            if (!person.MyGirthUp) {c.Work_S_G_Up = sizeUp + '-' + Girth} else {c.Work_S_G_Up = c.countSizeUp + '-' + Girth}
-            if(isNaN(incChest) || incChest < ExtensibilitChest.From) {c.IncChestUp = 'Нет размера'} else {c.IncChestUp = incChest}
-            if(isNaN(incWaist) || incChest < ExtensibilitWaist.From) {c.IncWaistUp = 'Нет размера'} else {c.IncWaistUp = incWaist}
-            if(isNaN(incHip) || incChest < ExtensibilitHip.From ) {c.IncHipUp = 'Нет размера'} else {c.IncHipUp = incHip}
+              if (person.MyGirthUp || person.MySizeUp) {c.Work_S_G_Up = sizeUp + '-' + Girth} else {c.Work_S_G_Up = (noSize &&  noSizeWhy + ' ')  + c.countSizeUp + '-' + Girth}
+            if(isNaN(incChest)) {c.IncChestUp = 'Нет размера'} else {c.IncChestUp = incChest}
+            if(isNaN(incWaist)) {c.IncWaistUp = 'Нет размера'} else {c.IncWaistUp = incWaist}
+            if(isNaN(incHip)) {c.IncHipUp = 'Нет размера'} else {c.IncHipUp = incHip}
 
             lettersUp.map((letter) => {
               const letterVal = dataTableUp.find(obj => {
@@ -690,7 +770,8 @@ function App() {
             {dataTeam && (
               <>
                 <Table
-                  height={height-325}
+                  // height={height-325}
+                  autoHeight
                   data={dataTeam}
                   hover={true}
                   bordered={true}
