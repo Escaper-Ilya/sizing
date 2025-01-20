@@ -143,6 +143,18 @@ function App() {
         const sheetDataNew = sheetData.map((person, index) => {
           let girth
           const height = person.Height
+          let name
+          let nomber
+          let chest
+          let waist
+          let hip
+          // console.log(person.Nomber)
+          if(person.Name === undefined) {name = null} else {name = person.Name}
+          if(person.Nomber === undefined) {nomber = null} else {nomber = person.Nomber}
+          if(person.Chest === undefined) {chest = null} else {chest = person.Chest}
+          if(person.Waist === undefined) {waist = null} else {waist = person.Waist}
+          if(person.Hip === undefined) {hip = null} else {hip = person.Hip}
+
           if( 90 <= height && height <= 93) (girth = 92)
           if( 94 <= height && height <= 99) (girth = 98)
           if( 100 <= height && height <= 105) (girth = 104)
@@ -165,11 +177,17 @@ function App() {
           if( 203 <= height && height <= 208) (girth = 206)
           if( 209 <= height && height <= 213) (girth = 212)
           return {
-            ...person,
+            // ...person,
+            Name: name,
+            Nomber: nomber,
+            Height: height,
+            Chest: chest,
+            Waist: waist,
+            Hip: hip,
             id: index,
             Girth: girth,
             countSizeUp: null,
-            countSizeUpDown: null,
+            countSizeDown: null,
             MyGirthUp: null,
             MySizeUp: null,
             MyGirthDown: null,
@@ -278,8 +296,8 @@ function App() {
         // _________________________________________
   
         const sizeUpArr = [sizeChest, sizeWaist, sizeHip].filter(element => element !== 0)
-        console.log(sizeUpArr.length)
-        console.log(["Грудь "+ sizeChest + "/   Тал " + sizeWaist + "/   Бедр " + sizeHip])
+        // console.log(sizeUpArr.length)
+        // console.log(["Грудь "+ sizeChest + "/   Тал " + sizeWaist + "/   Бедр " + sizeHip])
 
         const noSize = sizeUpArr.length < 3
 
@@ -305,8 +323,8 @@ function App() {
 
           if(incChestMin < ExtensibilitChest.From ) {noSizeWhy = 'Макс'; sizeUp = maxSizeChest}
           if(incChestMax > ExtensibilitChest.To && sizeUpArr.length === 0) {noSizeWhy = 'Мин'; sizeUp = minSizeChest}
-          if(sizeUpArr.length >= 1) {console.log('dfhdrhdsrhdsrhdsrh')}
-          console.log([minSizeChest, maxSizeChest,  incChestMin  + '<'+ ExtensibilitChest.From,incChestMax   + '>'+ ExtensibilitChest.To])
+          // if(sizeUpArr.length >= 1) {console.log('dfhdrhdsrhdsrhdsrh')}
+          // console.log([minSizeChest, maxSizeChest,  incChestMin  + '<'+ ExtensibilitChest.From,incChestMax   + '>'+ ExtensibilitChest.To])
           
         }
         if(sizeWaist === 0){
@@ -326,7 +344,7 @@ function App() {
           })[minSizeWaist] * 2 - person.Waist).toFixed(2));
 
           if(incWaistMax < ExtensibilitWaist.From) {noSizeWhy = 'Макс'; sizeUp = maxSizeWaist}
-          console.log([minSizeWaist, maxSizeWaist, incWaistMax + '<'+ ExtensibilitWaist.From])
+          // console.log([minSizeWaist, maxSizeWaist, incWaistMax + '<'+ ExtensibilitWaist.From])
           
         }
         if(sizeHip === 0){
@@ -346,21 +364,21 @@ function App() {
           })[minSizeHip] * 2 - person.Hip).toFixed(2));
 
           
-          console.log(dataTableUp.find(obj => {
-            return obj.Height === Girth && obj.Letter === 'C';
-          })[maxSizeHip])
+          // console.log(dataTableUp.find(obj => {
+          //   return obj.Height === Girth && obj.Letter === 'C';
+          // })[maxSizeHip])
 
           if(incHipMin < ExtensibilitHip.From) {noSizeWhy = 'Макс'; sizeUp = maxSizeHip}
           if(incHipMax > ExtensibilitHip.To && sizeUpArr.length === 0) {noSizeWhy = 'Мин'; sizeUp = minSizeHip}
-          console.log([minSizeHip, maxSizeHip,incHipMin  + '<'+ ExtensibilitHip.From, incHipMax + '>'+ ExtensibilitHip.To])
+          // console.log([minSizeHip, maxSizeHip,incHipMin  + '<'+ ExtensibilitHip.From, incHipMax + '>'+ ExtensibilitHip.To])
           
         }
 
         var sizeCountUp
         
-        console.log(sizeUp)
-        if (sizeUpArr.length === 3 || sizeUp === 0)  {sizeCountUp = Math.max(...sizeUpArr); console.log(sizeCountUp)} 
-        else {sizeCountUp=sizeUp; console.log(sizeCountUp)}
+        // console.log(sizeUp)
+        if (sizeUpArr.length === 3 || sizeUp === 0)  {sizeCountUp = Math.max(...sizeUpArr)} 
+        else {sizeCountUp=sizeUp}
         
         if (!person.MySizeUp) {sizeUp = sizeCountUp} 
         else {sizeUp = person.MySizeUp}
@@ -492,10 +510,14 @@ function App() {
         const nextSizes = dataTeam.map((c, i) => {
           if (i === index) {
             const newItem = c
-            if (!person.MyGirthDown) {c.countSizeDown = sizeCountDown} 
-            c.WorkSizeDown = sizeDown
+            if (!person.MyGirthDown) {c.countSizeDown = sizeCountDown}
+
+            if(!isFinite(sizeDown)) {c.countSizeDown = '-'} else {c.countSizeDown = sizeDown}
+            if(!isFinite(sizeDown)) {c.WorkSizeDown = '-'} else {c.WorkSizeDown = sizeDown}
+            // c.WorkSizeDown = sizeDown
             c.WorGirthDown = Girth
             if (!person.MyGirthDown) {c.Work_S_G_Down = sizeDown + '-' + Girth} else {c.Work_S_G_Down = c.WorkSizeDown + '-' + Girth}
+            if (!isFinite(sizeDown)) {c.Work_S_G_Down = 'Нет роста'}
             if(isNaN(incWaist) || incWaist < ExtensibilitWaist.From) {c.IncWaistDown = null} else {c.IncWaistDown = incWaist}
             if(isNaN(incHip) || incHip < ExtensibilitHip.From) {c.IncHipDown = 'Нет размера'} else {c.IncHipDown = incHip}
             // if(isNaN(incChest) && incChest < ExtensibilitChest.From) {c.IncChestUp = 'Нет размера'} else {c.IncChestUp = incChest}
@@ -631,20 +653,30 @@ function App() {
     const newList = TableData.map(function(col){
       delete col['id'];
       delete col['countSizeUp'];
-      delete col['countSizeUpDown'];
+      delete col['countSizeDown'];
       delete col['Girth'];
       delete col['MyGirthUp'];
       delete col['MySizeUp'];
       delete col['MySizeDown'];
       delete col['MyGirthDown'];
       delete col['countSizeDown'];
-      ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'N', 'O', 'P', 'Q', 'R'].map((letter)=> {
-        if (!lettersUp.concat(lettersDown).includes(letter)) {
-          delete col[letter];
+      ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'N', 'M', 'O', 'P', 'Q', 'R'].map((letter)=> {
+        // console.log(lettersUp)
+        // console.log(lettersDown)
+        if(lettersUp !== null) {
+          if (!lettersUp.concat(lettersDown).includes(letter)) {
+            delete col[letter];
+          }
+        } else {
+          if (!lettersDown.includes(letter)) {
+            delete col[letter];
+          }
         }
+        
       })
       return col;
    });
+  //  console.log(newList)
     var wb = XLSX.utils.book_new()
     var ws = XLSX.utils.json_to_sheet(newList)
     XLSX.utils.book_append_sheet(wb, ws, 'Размеры команды')
